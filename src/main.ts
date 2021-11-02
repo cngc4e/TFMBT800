@@ -18,31 +18,44 @@ async function constructBase() {
     return base;
 }
 
+const MODULE_PATHS = ["modules", "priv_modules"];
 const globAsync = promisify(glob);
-async function start() {
-    var base = await constructBase();
-
-    // Find the modules
-    try {
-        var paths = await globAsync(__dirname + "/modules/*.js");
-    } catch (e) {
-        throw e;
-    }
-
+async function loadModules(base: BaseLib) {
     var modules: DynamicModule[] = [];
-    for (let i = 0; i < paths.length; i++) {
-        console.log(`try ${paths[i]}`);
-        let module_name = "./modules/" + path.basename(paths[i], ".js");
+
+    for (let n_m = 0; n_m < MODULE_PATHS.length; n_m++) {
+        let folder = MODULE_PATHS[n_m];
+
+        console.log("Loading modules from folder: " + folder);
+
+        // Find the modules in this folder
         try {
-            let module_def = await import(module_name);
-            let module_class = module_def.default as typeof DynamicModule;
-            let module = new module_class(base);
-            modules.push(module);
-            console.debug(`Import ${module_name} (${paths[i]})`);
+            var paths = await globAsync(`${__dirname}/${folder}/*.js`);
         } catch (e) {
-            console.error(`Couldnt import ${module_name} (${paths[i]}):\n${e.toString()}`);
+            throw e;
+        }
+
+        for (let i = 0; i < paths.length; i++) {
+            //console.log(`try ${paths[i]}`);
+            let module_name = `./${folder}/` + path.basename(paths[i], ".js");
+            try {
+                let module_def = await import(module_name);
+                let module_class = module_def.default as typeof DynamicModule;
+                let module = new module_class(base);
+                modules.push(module);
+                console.debug(`Import ${module_name} (${paths[i]})`);
+            } catch (e) {
+                console.error(`Couldnt import ${module_name} (${paths[i]}):\n${e.toString()}`);
+            }
         }
     }
+
+    return modules;
+}
+
+async function start() {
+    var base = await constructBase();
+    var modules = await loadModules(base);
 
     for (let i = 0; i < modules.length; i++) {
         let module = modules[i];

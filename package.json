@@ -7,7 +7,7 @@
   "scripts": {
     "start": "npm run tsc && npm run qstart",
     "qstart": "node -r dotenv/config .",
-    "tsc": "tsc --clean",
+    "tsc": "tsc --build --clean && tsc",
     "lint": "eslint -c .eslintrc --ext .ts ./src"
   },
   "repository": "https://github.com/cheeseformice/ingame-bots.git",
