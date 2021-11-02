@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
-  
+
     /* Basic Options */
-    "target": "es5",
+    "target": "ES6",
     "module": "commonjs",
 
     /* Strict Type-Checking Options */
     "strict": false,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "strictNullChecks": true,
     "strictBindCallApply": true,
     "strictPropertyInitialization": true,

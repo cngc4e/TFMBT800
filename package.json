@@ -2,12 +2,12 @@
   "name": "test-bots",
   "version": "0.1.0",
   "description": "Source code for in-game bot services.",
-  "main": "src/main.js",
+  "main": "dist/main.js",
   "type": "commonjs",
   "scripts": {
-    "start": "npm run qstart",
+    "start": "npm run tsc && npm run qstart",
     "qstart": "node -r dotenv/config .",
-    "tsc": "tsc",
+    "tsc": "tsc --clean",
     "lint": "eslint -c .eslintrc --ext .ts ./src"
   },
   "repository": "https://github.com/cheeseformice/ingame-bots.git",
@@ -16,6 +16,11 @@
   "dependencies": {
     "@cheeseformice/transformice.js": "file:../transformice.js",
     "dotenv": "^10.0.0",
+    "glob": "^7.2.0",
     "transformice.js": "file:../transformice.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "typescript": "^4.4.4"
   }
 }
