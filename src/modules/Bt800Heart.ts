@@ -1,5 +1,5 @@
-import { Identifier } from "transformice.js";
-import { ByteArray, Connection } from "transformice.js/dist/utils";
+import { Identifier } from "@cheeseformice/transformice.js";
+import { ByteArray, Connection } from "@cheeseformice/transformice.js/dist/utils";
 import zlib from "zlib";
 import BaseLib from "../BaseLib";
 import { DynamicModule, DynamicModuleStatus } from "../DynamicModule";

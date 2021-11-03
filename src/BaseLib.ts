@@ -1,4 +1,4 @@
-import { Client } from "transformice.js";
+import { Client } from "@cheeseformice/transformice.js";
 
 declare interface BaseLib {
     client: Client;

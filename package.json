@@ -1,23 +1,19 @@
 {
-  "name": "test-bots",
+  "name": "bt800",
   "version": "0.1.0",
-  "description": "Source code for in-game bot services.",
+  "description": "Contains source code bits for the Bt800 bot in Transformice.",
   "main": "dist/main.js",
-  "type": "commonjs",
   "scripts": {
     "start": "npm run tsc && npm run qstart",
     "qstart": "node -r dotenv/config .",
     "tsc": "tsc --build --clean && tsc",
     "lint": "eslint -c .eslintrc --ext .ts ./src"
   },
-  "repository": "https://github.com/cheeseformice/ingame-bots.git",
-  "author": "Cheeseformice",
   "license": "MIT",
   "dependencies": {
-    "@cheeseformice/transformice.js": "file:../transformice.js",
+    "@cheeseformice/transformice.js": "^1.0.0-beta.6",
     "dotenv": "^10.0.0",
-    "glob": "^7.2.0",
-    "transformice.js": "file:../transformice.js"
+    "glob": "^7.2.0"
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",

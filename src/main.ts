@@ -1,6 +1,6 @@
 import glob from "glob";
 import path from "path";
-import { Client, enums, Identifier } from "transformice.js";
+import { Client, enums, Identifier } from "@cheeseformice/transformice.js";
 import { promisify } from "util";
 import BaseLib from "./BaseLib";
 import { DynamicModule, DynamicModuleStatus } from "./DynamicModule";
