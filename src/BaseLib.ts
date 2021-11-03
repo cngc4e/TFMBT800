@@ -4,7 +4,6 @@ declare interface BaseLib {
     client: Client;
 }
 
-class BaseLib {
-}
+class BaseLib {}
 
 export default BaseLib;

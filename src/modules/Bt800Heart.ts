@@ -2,7 +2,7 @@ import { Identifier } from "@cheeseformice/transformice.js";
 import { ByteArray, Connection } from "@cheeseformice/transformice.js/dist/utils";
 import zlib from "zlib";
 import BaseLib from "../BaseLib";
-import { DynamicModule, DynamicModuleStatus } from "../DynamicModule";
+import { DynamicModule, DynamicModuleError } from "../DynamicModule";
 import EventRegistry from "../EventRegistry";
 
 export default class Bt800Heart extends DynamicModule {
@@ -74,11 +74,11 @@ export default class Bt800Heart extends DynamicModule {
             console.error("Connection err", err);
         });
 
-        return DynamicModuleStatus.OK;
+        return DynamicModuleError.OK;
     }
 
     unload() {
         this.evtReg.removeAllListeners();
-        return DynamicModuleStatus.OK;
+        return DynamicModuleError.OK;
     }
 }
