@@ -1,5 +1,6 @@
 import { Client, enums } from "@cheeseformice/transformice.js";
 import BaseLib from "./BaseLib";
+import { initRedis } from "./connection/RedisBroker";
 import { loadModules } from "./ModuleLoader";
 
 async function constructBase() {
@@ -17,6 +18,10 @@ async function constructBase() {
 
 async function start() {
     var base = await constructBase();
+
+    if (process.env.REDIS_URL) {
+        await initRedis();
+    }
 
     await loadModules(base);
 

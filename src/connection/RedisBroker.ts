@@ -12,6 +12,11 @@ export async function subscribeChannel(...args: Parameters<typeof subClient.subs
     return await subClient.subscribe(...args);
 }
 
+export async function unsubscribeChannel(...args: Parameters<typeof subClient.unsubscribe>) {
+    if (pendingInit) throw MODULE_NAME + " Cannot unsubscribe before init!";
+    return await subClient.unsubscribe(...args);
+}
+
 export async function publishChannel(...args: Parameters<typeof pubClient.publish>) {
     if (pendingInit) throw MODULE_NAME + " Cannot publish before init!";
     return await pubClient.publish(...args);

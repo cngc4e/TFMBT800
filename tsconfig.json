@@ -15,10 +15,10 @@
     "noImplicitThis": true,
 
     /* Module Resolution Options */
-    "baseUrl": "./",
+    "baseUrl": "src",
     "esModuleInterop": true,
     "removeComments": true,
-    "outDir": "dist",
+    "outDir": "dist"
   },
   "include": [
     "src/**/*"

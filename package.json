@@ -5,8 +5,8 @@
   "main": "dist/main.js",
   "scripts": {
     "start": "npm run tsc && npm run qstart",
-    "qstart": "node -r dotenv/config .",
-    "tsc": "tsc --build --clean && tsc",
+    "qstart": "cross-env NODE_PATH=dist/ node -r dotenv/config .",
+    "tsc": "rimraf dist && tsc --build",
     "lint": "eslint -c .eslintrc --ext .ts ./src"
   },
   "license": "MIT",
@@ -19,6 +19,8 @@
   "devDependencies": {
     "@types/glob": "^7.2.0",
     "@types/redis": "^2.8.32",
+    "cross-env": "^7.0.3",
+    "rimraf": "^3.0.2",
     "typescript": "^4.4.4"
   }
 }

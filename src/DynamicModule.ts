@@ -17,8 +17,8 @@ export enum DynamicModuleStateFlag {
  */
 declare interface DynamicModule {
     init?(): DynamicModuleError;
-	load(): DynamicModuleError;
-	unload(): DynamicModuleError;
+    load?(): DynamicModuleError;
+    unload?(): DynamicModuleError;
 }
 
 class DynamicModule {

@@ -27,7 +27,6 @@ export async function loadModules(base: BaseLib) {
         }
 
         for (let i = 0; i < paths.length; i++) {
-            //console.log(`try ${paths[i]}`);
             let module_name = `./${folder}/` + path.basename(paths[i], ".js");
             try {
                 let module_def = await import(module_name);
@@ -70,6 +69,11 @@ export async function loadModules(base: BaseLib) {
 
     for (let i = 0; i < modules.length; i++) {
         let module = modules[i];
+
+        // Don't load unless init stage has completed
+        if ((module.state & DynamicModuleStateFlag.INIT_DONE) == 0) {
+            continue;
+        }
 
         if (module.load && module.load() !== DynamicModuleError.OK) {
             console.error(`Fail load: ${module.constructor.name}`);
