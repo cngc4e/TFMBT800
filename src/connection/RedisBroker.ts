@@ -9,12 +9,12 @@ var pubClient: ReturnType<typeof createClient>;
 
 export async function subscribeChannel(...args: Parameters<typeof subClient.subscribe>) {
     if (pendingInit) throw MODULE_NAME + " Cannot subscribe before init!";
-    return subClient.subscribe(...args);
+    return await subClient.subscribe(...args);
 }
 
-export function publishChannel(...args: Parameters<typeof pubClient.publish>) {
+export async function publishChannel(...args: Parameters<typeof pubClient.publish>) {
     if (pendingInit) throw MODULE_NAME + " Cannot publish before init!";
-    return pubClient.publish(...args);
+    return await pubClient.publish(...args);
 }
 
 export function isReady() {

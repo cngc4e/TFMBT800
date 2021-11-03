@@ -83,7 +83,7 @@ export async function loadModules(base: BaseLib) {
     }
 }
 
-export function loadModuleName(moduleName: string): boolean {
+export async function loadModuleName(moduleName: string): Promise<boolean> {
     let module = loadableModules[moduleName];
     if (!module) {
         return false;
@@ -113,7 +113,7 @@ export function loadModuleName(moduleName: string): boolean {
     return true;
 }
 
-export function unloadModuleName(moduleName: string): boolean {
+export async function unloadModuleName(moduleName: string): Promise<boolean> {
     let module = loadableModules[moduleName];
     if (!module) {
         return false;
