@@ -1,20 +1,17 @@
 import { EventEmitter } from "events";
 
-//declare type ValueOf<T> = T[keyof T];
-
-declare interface EventRegistry {
-    on<T extends EventEmitter, F extends T["on"]>(emitter: T, ...args: Parameters<F>): this;
-    //on<T extends EventEmitter>(emitter: T, event: Parameters<T["on"]>[0],
-    //        listener: Parameters<T["on"]>[1])
-    //on<T extends EventEmitter, F extends T["on"], A extends Parameters<F>[0]>(
-    //    emitter: T,
-    //    event: A,
-    //    listener: T["on"]<"roomPlayerDie">[1]
-    //    ):this;
-}
+// TODO: is there a neat way to provide EventEmitter autocompletion?
+// declare interface EventRegistry {
+//     on<T extends EventEmitter>(emitter: T, event: Parameters<T["on"]>[0],
+//            listener: Parameters<T["on"]>[1])
+//     on<T extends EventEmitter, F extends T["on"], A extends Parameters<F>[0]>(
+//        emitter: T,
+//        event: A,
+//        listener: T["on"]<"roomPlayerDie">[1]
+//        ):this;
+// }
 
 /**
- * TODO: is there a neat way to provide EventEmitter autocompletion?
  * Keeps track of EventEmitter listeners and automatically removes them upon selected events.
  *
  * Based on EventRegistry (https://www.npmjs.com/package/event-registry), but simplified with

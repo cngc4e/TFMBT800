@@ -1,9 +1,9 @@
 import { Identifier } from "@cheeseformice/transformice.js";
 import { ByteArray, Connection } from "@cheeseformice/transformice.js/dist/utils";
 import zlib from "zlib";
-import BaseLib from "../BaseLib";
-import { DynamicModule, DynamicModuleError } from "../DynamicModule";
-import EventRegistry from "../EventRegistry";
+import BaseLib from "BaseLib";
+import { DynamicModule, DynamicModuleError } from "DynamicModule";
+import EventRegistry from "registry/EventRegistry";
 
 export default class Bt800Heart extends DynamicModule {
     private evtReg: EventRegistry;

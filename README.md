@@ -18,7 +18,7 @@ Modules ending with .ts are loaded in the following folders:
 
 These modules must extend the `DynamicModule` interface and implement `load` and `unload` functionalities. See `src/modules` for examples.
 
-## Pitfall
+## Drawback
 Unfortunately, the design lacks the convenience of intellisense type auto inference in the `Client` event emitter. You must explicitly specify the parameter types. I am not sure if it's possible to fully port the functionality over to `EventRegistry`.
 
 With `Client`:

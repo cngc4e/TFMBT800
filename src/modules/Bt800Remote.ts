@@ -1,18 +1,26 @@
 import { ByteArray } from "@cheeseformice/transformice.js";
-import { subscribeChannel, unsubscribeChannel } from "connection/RedisBroker";
+import BaseLib from "BaseLib";
 import { DynamicModule, DynamicModuleError } from "DynamicModule";
+import RedisRegistry from "registry/RedisRegistry";
 
 /**
  * Handles remote communication
  */
 export default class Bt800Remote extends DynamicModule {
+    private redisReg: RedisRegistry;
+    constructor(base: BaseLib) {
+        super(base);
+        this.redisReg = new RedisRegistry();
+    }
+
     load() {
         var client = this.base.client;
+        var redisReg = this.redisReg;
 
         // Exposes endpoints
 
         // Request whisper
-        subscribeChannel("tfm/external/whisper", (data) => {
+        this.redisReg.sub("tfm/external/whisper", (data) => {
             try {
                 const packet = new ByteArray(Buffer.from(data));
 
@@ -28,7 +36,7 @@ export default class Bt800Remote extends DynamicModule {
     }
 
     unload() {
-        unsubscribeChannel("tfm/whisper");
+        this.redisReg.unsubAllListeners();
         return DynamicModuleError.OK;
     }
 }
