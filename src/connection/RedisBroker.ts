@@ -29,10 +29,8 @@ export function isReady() {
 /**
  * Creates the Redis sub/pub. Throws an error if failed.
  */
-export async function initRedis() {
-    var client = createClient({
-        url: process.env.REDIS_URL,
-    });
+export async function initRedis(url: string) {
+    var client = createClient({ url });
 
     subClient = client as typeof subClient;
     pubClient = subClient.duplicate();

@@ -20,7 +20,7 @@ async function start() {
     var base = await constructBase();
 
     if (process.env.REDIS_URL) {
-        await initRedis();
+        await initRedis(process.env.REDIS_URL);
     }
 
     await loadModules(base);
