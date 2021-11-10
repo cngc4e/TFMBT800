@@ -20,7 +20,7 @@ export default class Bt800Remote extends DynamicModule {
         // Exposes endpoints
 
         // Request whisper
-        this.redisReg.sub("tfm/external/whisper", (data) => {
+        redisReg.sub("tfm/external/whisper", (data) => {
             try {
                 const packet = new ByteArray(Buffer.from(data));
 

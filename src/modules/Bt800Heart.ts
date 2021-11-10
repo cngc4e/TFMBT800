@@ -1,26 +1,25 @@
 import { Identifier } from "@cheeseformice/transformice.js";
-import { ByteArray, Connection } from "@cheeseformice/transformice.js/dist/utils";
-import zlib from "zlib";
+import ClientEvents from "@cheeseformice/transformice.js/dist/client/Events";
 import BaseLib from "BaseLib";
 import { DynamicModule, DynamicModuleError } from "DynamicModule";
 import EventRegistry from "registry/EventRegistry";
+import zlib from "zlib";
 
 export default class Bt800Heart extends DynamicModule {
-    private evtReg: EventRegistry;
+    private clientReg: EventRegistry<ClientEvents>;
     constructor(base: BaseLib) {
         super(base);
-        this.evtReg = new EventRegistry();
+        this.clientReg = new EventRegistry(base.client);
     }
 
     load() {
-        var evtReg = this.evtReg;
-        var client = this.base.client;
+        var clientReg = this.clientReg;
 
-        evtReg.on(client, "ready", () => {
+        clientReg.on("ready", () => {
             console.log("ready!");
         });
 
-        evtReg.on(client, "rawPacket", (conn: Connection, ccc: number, packet: ByteArray) => {
+        clientReg.on("rawPacket", (conn, ccc, packet) => {
             packet.readPosition = 2;
             switch (ccc) {
                 case Identifier(4, 3): {
@@ -54,23 +53,23 @@ export default class Bt800Heart extends DynamicModule {
             //console.log(packet.toString())
         });
 
-        evtReg.on(client, "connect", (conn: Connection) => {
+        clientReg.on("connect", (conn) => {
             console.log("establish conn", conn.socket.remoteAddress, conn.socket.remotePort);
         });
 
-        evtReg.on(client, "restart", () => {
+        clientReg.on("restart", () => {
             console.log("restarting!");
             console.trace();
         });
 
-        evtReg.on(client, "loginError", (code: number, err1: string, err2: string) => {
+        clientReg.on("loginError", (code, err1, err2) => {
             // code
             // 1: already connected
             // 2: incorrect
             console.error("Login err", code, err1, err2);
         });
 
-        evtReg.on(client, "connectionError", (err: Error) => {
+        clientReg.on("connectionError", (err) => {
             console.error("Connection err", err);
         });
 
@@ -78,7 +77,7 @@ export default class Bt800Heart extends DynamicModule {
     }
 
     unload() {
-        this.evtReg.removeAllListeners();
+        this.clientReg.removeAllListeners();
         return DynamicModuleError.OK;
     }
 }
