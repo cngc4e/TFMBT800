@@ -14,7 +14,8 @@
     "@cheeseformice/transformice.js": "^1.0.0-beta.6",
     "dotenv": "^10.0.0",
     "glob": "^7.2.0",
-    "redis": "^4.0.0-rc.3"
+    "redis": "^4.0.0-rc.3",
+    "tslog": "^3.2.2"
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",

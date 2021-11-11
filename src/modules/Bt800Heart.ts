@@ -1,83 +1,79 @@
 import { Identifier } from "@cheeseformice/transformice.js";
 import ClientEvents from "@cheeseformice/transformice.js/dist/client/Events";
-import BaseLib from "BaseLib";
+import * as app from "app";
 import { DynamicModule, DynamicModuleError } from "DynamicModule";
 import EventRegistry from "registry/EventRegistry";
 import zlib from "zlib";
 
-export default class Bt800Heart extends DynamicModule {
-    private clientReg: EventRegistry<ClientEvents>;
-    constructor(base: BaseLib) {
-        super(base);
-        this.clientReg = new EventRegistry(base.client);
-    }
+var clientReg: EventRegistry<ClientEvents>;
 
-    load() {
-        var clientReg = this.clientReg;
+export default new DynamicModule({
+    name: "Bt800Heart",
 
+    async init() {
+        clientReg = new EventRegistry(app.client);
+        return DynamicModuleError.OK;
+    },
+
+    async load() {
         clientReg.on("ready", () => {
-            console.log("ready!");
+            this.logger.info("ready!");
         });
 
         clientReg.on("rawPacket", (conn, ccc, packet) => {
             packet.readPosition = 2;
             switch (ccc) {
-                case Identifier(4, 3): {
-                    //let objs = ShamanObject.fromPacket4_3(packet);
-                    //console.dir(objs);
-                    break;
-                }
                 case Identifier(5, 2): {
                     let map_code = packet.readInt();
                     let num_players = packet.readShort();
                     let round_code = packet.readByte();
                     let enclen = packet.readInt();
 
-                    console.log("map_code", map_code);
-                    console.log("# of players", num_players);
-                    console.log("round number", round_code);
+                    this.logger.info("map_code", map_code);
+                    this.logger.info("# of players", num_players);
+                    this.logger.info("round number", round_code);
 
                     if (enclen > 0) {
                         let encxml = packet.readBufBytes(enclen);
-                        console.log("length encxml:", encxml.length);
-                        console.log(zlib.inflateSync(encxml).toString());
+                        this.logger.info("length encxml:", encxml.length);
+                        this.logger.info(zlib.inflateSync(encxml).toString());
                     }
 
-                    console.log("author", packet.readUTF());
-                    console.log("perm", packet.readByte());
-                    //console.log("? bool", packet.readBool());
+                    this.logger.info("author", packet.readUTF());
+                    this.logger.info("perm", packet.readByte());
+                    //this.logger.info("? bool", packet.readBool());
                     break;
                 }
             }
-            //console.log("receive",IdentifierSplit(ccc))
-            //console.log(packet.toString())
+            //this.logger.info("receive",IdentifierSplit(ccc))
+            //this.logger.info(packet.toString())
         });
 
         clientReg.on("connect", (conn) => {
-            console.log("establish conn", conn.socket.remoteAddress, conn.socket.remotePort);
+            this.logger.info("establish conn", conn.socket.remoteAddress, conn.socket.remotePort);
         });
 
         clientReg.on("restart", () => {
-            console.log("restarting!");
-            console.trace();
+            this.logger.info("restarting!");
+            this.logger.trace();
         });
 
         clientReg.on("loginError", (code, err1, err2) => {
             // code
             // 1: already connected
             // 2: incorrect
-            console.error("Login err", code, err1, err2);
+            this.logger.error("Login err", code, err1, err2);
         });
 
         clientReg.on("connectionError", (err) => {
-            console.error("Connection err", err);
+            this.logger.error("Connection err", err);
         });
 
         return DynamicModuleError.OK;
-    }
+    },
 
-    unload() {
-        this.clientReg.removeAllListeners();
+    async unload() {
+        clientReg.removeAllListeners();
         return DynamicModuleError.OK;
     }
-}
+});

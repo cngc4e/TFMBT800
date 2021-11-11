@@ -1,22 +1,22 @@
 import { ByteArray } from "@cheeseformice/transformice.js";
-import BaseLib from "BaseLib";
+import * as app from "app";
 import { DynamicModule, DynamicModuleError } from "DynamicModule";
 import RedisRegistry from "registry/RedisRegistry";
+
+var redisReg: RedisRegistry;
 
 /**
  * Handles remote communication
  */
-export default class Bt800Remote extends DynamicModule {
-    private redisReg: RedisRegistry;
-    constructor(base: BaseLib) {
-        super(base);
-        this.redisReg = new RedisRegistry();
-    }
+export default new DynamicModule({
+    name: "Bt800Remote",
 
-    load() {
-        var client = this.base.client;
-        var redisReg = this.redisReg;
+    async init() {
+        redisReg = new RedisRegistry();
+        return DynamicModuleError.OK;
+    },
 
+    async load() {
         // Exposes endpoints
 
         // Request whisper
@@ -26,17 +26,17 @@ export default class Bt800Remote extends DynamicModule {
 
                 var name = packet.readUTF();
                 var message = packet.readUTF();
-                client.sendWhisper(name, message);
+                app.client.sendWhisper(name, message);
             } catch (e) {
-                console.error("Error or malformed packet:", e);
+                this.logger.error("Error or malformed packet:", e);
             }
         });
 
         return DynamicModuleError.OK;
-    }
+    },
 
-    unload() {
-        this.redisReg.unsubAllListeners();
+    async unload() {
+        redisReg.unsubAllListeners();
         return DynamicModuleError.OK;
     }
-}
+});

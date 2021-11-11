@@ -1,4 +1,5 @@
 
+import { logger } from 'app';
 import { createClient } from 'redis';
 
 const MODULE_NAME = "[RedisBroker]";
@@ -36,7 +37,7 @@ export async function initRedis(url: string) {
     pubClient = subClient.duplicate();
 
     await Promise.all([subClient.connect(), pubClient.connect()]);
-    console.debug(MODULE_NAME, "connected.");
+    logger.debug("RedisBroker connected.");
 
     pendingInit = null;
 }
