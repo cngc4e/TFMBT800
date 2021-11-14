@@ -1,9 +1,12 @@
-import { ByteArray } from "@cheeseformice/transformice.js";
+import ClientEvents from "@cheeseformice/transformice.js/dist/client/Events";
 import * as app from "app";
+import { InfraConnectionMessageReceiverEvents, messageReceiver, remote } from "connection/remote";
 import { DynamicModule, DynamicModuleError } from "DynamicModule";
-import RedisRegistry from "registry/RedisRegistry";
+import EventRegistry from "registry/EventRegistry";
+import { ByteArray } from "utils/byteArray";
+import { EventWaiter } from "utils/events";
 
-var redisReg: RedisRegistry;
+var msgrecv: EventRegistry<InfraConnectionMessageReceiverEvents>;
 
 /**
  * Handles remote communication
@@ -12,7 +15,7 @@ export default new DynamicModule({
     name: "Bt800Remote",
 
     async init() {
-        redisReg = new RedisRegistry();
+        msgrecv = new EventRegistry(messageReceiver);
         return DynamicModuleError.OK;
     },
 
@@ -20,23 +23,33 @@ export default new DynamicModule({
         // Exposes endpoints
 
         // Request whisper
-        redisReg.sub("tfm/external/whisper", (data) => {
+        msgrecv.on("request/whisper", async (content, connMsg) => {
             try {
-                const packet = new ByteArray(Buffer.from(data));
+                const packet = new ByteArray(Buffer.from(content));
 
                 var name = packet.readUTF();
                 var message = packet.readUTF();
                 app.client.sendWhisper(name, message);
+
+                try {
+                    let [message] = await (new EventWaiter<ClientEvents>(app.client)).waitFor("whisper", {
+                        condition: (message) => message.sentTo.toLowerCase().includes(name.toLowerCase()),
+                        timeout: 5000
+                    });
+                    let packet = new ByteArray();
+                    packet.writeUTF(message.sentTo).writeUTF(message.content);
+                    await remote.sendMessage(connMsg.sender, "reply/whisper", packet.buffer);
+                } catch (e) {}
+
             } catch (e) {
                 this.logger.error("Error or malformed packet:", e);
             }
         });
-
         return DynamicModuleError.OK;
     },
 
     async unload() {
-        redisReg.unsubAllListeners();
+        msgrecv.removeAllListeners();
         return DynamicModuleError.OK;
     }
 });
