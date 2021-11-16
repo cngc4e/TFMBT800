@@ -2,7 +2,6 @@ import * as app from "app";
 import { createClient } from "redis";
 import { TypedEmitter } from "tiny-typed-emitter";
 import { ByteArray } from "utils/byteArray";
-import { multislug } from "utils/identifiers";
 
 interface InfraConnectionEvents {
     /**
@@ -37,6 +36,19 @@ export interface InfraConnectionBroadcast {
     content: Buffer;
 }
 
+interface InfraConnectionSubscriptionEvents {
+    /**
+     * Message received from the subscription channel.
+     */
+    message: (content: Buffer, message: InfraConnectionBroadcast) => void;
+    /**
+     * Subscriber has stopped listening.
+     */
+    closed: () => void;
+}
+
+type InfraConnectionSubscription = TypedEmitter<InfraConnectionSubscriptionEvents>;
+
 /**
  * Interface for inter-process communication.
  */
@@ -55,14 +67,14 @@ class InfraConnection extends TypedEmitter<InfraConnectionEvents> {
     private redisChannel: string;
     private logger: typeof app.logger;
     private connected: boolean;
-    private subscribedBroadcasts: { [slug: string]: boolean };
+    private subscribedBroadcasts: { [channel: string]: InfraConnectionSubscription };
 
     static processToRedisChannel(processName: string) {
         return ":receiver/" + processName;
     }
 
-    static broadcastToRedisChannel(target: string, broadcastName: string) {
-        return `:broadcast/${target}/${broadcastName}`;
+    static broadcastToRedisChannel(broadcastName: string) {
+        return `:broadcast/${broadcastName}`;
     }
 
     /**
@@ -94,7 +106,7 @@ class InfraConnection extends TypedEmitter<InfraConnectionEvents> {
         const buflen = packet.readUnsignedShort();
         const content = buflen > 0 ? packet.readBufBytes(buflen) : Buffer.from("");
 
-        this.emit("broadcastReceived", { sender, channel, content });
+        return { sender, channel, content } as InfraConnectionBroadcast;
     }
 
     async connect(url: string) {
@@ -172,57 +184,66 @@ class InfraConnection extends TypedEmitter<InfraConnectionEvents> {
         }
 
         await this.pubClient.publish(
-            InfraConnection.broadcastToRedisChannel(this.processName, channel),
+            InfraConnection.broadcastToRedisChannel(channel),
             packet.buffer as unknown as string
         );
     }
 
     /**
-     * Enables broadcast messages from a channel to be received in the `broadcastReceived` event.
-     * @param target - The target name of the process to subscribe to.
+     * Retrieves an emitter that subscribes to a broadcast channel.
      * @param channel - The broadcast channel to subscribe to.
      */
-    async subscribeBroadcast(target: string, channel: string, listener?: InfraConnectionBroadcast) {
+    async subscribeBroadcast(channel: string) {
         if (!this.connected) {
-            throw `Attempt to subscribe to ${target} broadcast ${channel} without a connection`;
+            throw `Attempt to subscribe broadcast to ${channel} without a connection`;
         }
 
-        if (this.subscribedBroadcasts[multislug(target, channel)]) {
+        var subscriber = this.subscribedBroadcasts[channel];
+        if (subscriber) {
             // already subscribed
-            return;
+            return subscriber;
         }
-        this.subscribedBroadcasts[multislug(target, channel)] = true;
+        subscriber = new TypedEmitter() as InfraConnectionSubscription;
+        this.subscribedBroadcasts[channel] = subscriber;
 
         await this.client.subscribe(
-            InfraConnection.broadcastToRedisChannel(target, channel),
-            (message, _channel) => this.onBroadcastPacketReceived(channel, Buffer.from(message))
+            InfraConnection.broadcastToRedisChannel(channel),
+            async (message, _channel) => {
+                const bcst = await this.onBroadcastPacketReceived(channel, Buffer.from(message));
+                subscriber.emit("message", bcst.content, bcst);
+                this.emit("broadcastReceived", bcst);
+            }
         );
+
+        return subscriber;
     }
 
     /**
      * Unsubscribes a channel subscribed by `subscribeBroadcast`.
-     * @param target - The target name of the process to unsubscribe from.
      * @param channel - The broadcast channel to unsubscribe from.
      */
-    async unsubscribeBroadcast(target: string, channel: string) {
+    async unsubscribeBroadcast(channel: string) {
         if (!this.connected) {
-            throw `Attempt to unsubscribe from ${target} broadcast ${channel} without a connection`;
+            throw `Attempt to unsubscribe broadcast from ${channel} without a connection`;
         }
 
-        if (!this.subscribedBroadcasts[multislug(target, channel)]) {
+        if (!this.subscribedBroadcasts[channel]) {
             // already unsubscribed
             return;
         }
-        delete this.subscribedBroadcasts[multislug(target, channel)];
+
+        this.subscribedBroadcasts[channel].emit("closed");
+        delete this.subscribedBroadcasts[channel];
 
         await this.client.unsubscribe(
-            InfraConnection.broadcastToRedisChannel(target, channel)
+            InfraConnection.broadcastToRedisChannel(channel)
         );
     }
 }
 
 type KeyType = string | number | symbol;
 type ReceiverCallbackType = (content: Buffer, message: InfraConnectionMessage) => void
+
 /**
  * An InfraConnection wrapper to neaten `messageReceived` callbacks using EventEmitter.
  */
@@ -238,14 +259,24 @@ export class InfraConnectionMessageReceiver<T extends KeyType = KeyType>
     }
 }
 
+export const remote = new InfraConnection("tfm:BT800");
+// TODO: move to in-class?
+export const messageReceiver = new InfraConnectionMessageReceiver(remote);
 
-export const remote = new InfraConnection("BT800");
+//tests
+async function name() {
 
-remote.on("broadcastReceived", (m) => {
-    m.channel
-})
-//make receiver with unhandled packet
-type lss = "dowhisper" | "amongus"
-var ff = new InfraConnectionMessageReceiver<lss>(remote)
-ff.on("amongus", (a) => { })
-//make channel subscriber
+
+    remote.on("broadcastReceived", (m) => {
+        m.channel
+    })
+    //make receiver with unhandled packet
+    type lss = "dowhisper" | "amongus"
+    var ff = new InfraConnectionMessageReceiver<lss>(remote)
+    ff.on("amongus", (a) => { })
+    //make channel subscriber
+    var sub = await remote.subscribeBroadcast("ff")
+    sub.on("message", (content) => {
+
+    })
+}

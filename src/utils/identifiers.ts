@@ -1,3 +1,3 @@
-export function multislug(...args: string[]) {
+export function multiSlug(...args: string[]) {
     return args.join("")
 }

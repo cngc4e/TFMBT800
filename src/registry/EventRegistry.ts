@@ -6,7 +6,7 @@ import { EventEmitter } from "events";
  * Based on EventRegistry (https://www.npmjs.com/package/event-registry), but simplified with
  * TypeScript support.
  */
-class EventRegistry<Events> {
+class EventRegistry<Events = { [event: string]: (...args: any[]) => void }> {
     private trackedDynEes: {
         eventName: string | symbol,
         listener: (...args: any[]) => void

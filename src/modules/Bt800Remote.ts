@@ -1,9 +1,10 @@
-import { ByteArray } from "@cheeseformice/transformice.js";
 import * as app from "app";
+import { messageReceiver } from "connection/remote";
 import { DynamicModule, DynamicModuleError } from "DynamicModule";
-import RedisRegistry from "registry/RedisRegistry";
+import EventRegistry from "registry/EventRegistry";
+import { ByteArray } from "utils/byteArray";
 
-var redisReg: RedisRegistry;
+var msgrecv: EventRegistry;
 
 /**
  * Handles remote communication
@@ -12,7 +13,7 @@ export default new DynamicModule({
     name: "Bt800Remote",
 
     async init() {
-        redisReg = new RedisRegistry();
+        msgrecv = new EventRegistry(messageReceiver);
         return DynamicModuleError.OK;
     },
 
@@ -20,9 +21,9 @@ export default new DynamicModule({
         // Exposes endpoints
 
         // Request whisper
-        redisReg.sub("tfm/external/whisper", (data) => {
+        msgrecv.on("request/whisper", (content) => {
             try {
-                const packet = new ByteArray(Buffer.from(data));
+                const packet = new ByteArray(Buffer.from(content));
 
                 var name = packet.readUTF();
                 var message = packet.readUTF();
@@ -36,7 +37,7 @@ export default new DynamicModule({
     },
 
     async unload() {
-        redisReg.unsubAllListeners();
+        msgrecv.removeAllListeners();
         return DynamicModuleError.OK;
     }
 });
