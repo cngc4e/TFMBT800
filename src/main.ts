@@ -1,4 +1,3 @@
-import { initRedis } from "./connection/RedisBroker";
 // Initialize the core module
 import * as app from "./app";
 import { loadModules } from "./ModuleLoader";

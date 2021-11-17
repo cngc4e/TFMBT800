@@ -95,11 +95,3 @@ export class DynamicModule {
         return true;
     }
 }
-
-new DynamicModule({
-    name: "sa",
-    async load() {
-
-        return DynamicModuleError.OK
-    }
-})
