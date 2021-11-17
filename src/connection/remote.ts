@@ -1,3 +1,4 @@
+import { logger } from "app";
 import { createClient } from "redis";
 import { TypedEmitter } from "tiny-typed-emitter";
 import { ByteArray } from "utils/byteArray";
@@ -14,7 +15,7 @@ interface InfraConnectionEvents {
     /**
      * Redis client error occurred.
      */
-    clientError: (error: Error) => void;
+    clientError: (error: Error, desc: "sub" | "pub") => void;
 }
 
 export interface InfraConnectionMessage {
@@ -117,7 +118,8 @@ class InfraConnection extends TypedEmitter<InfraConnectionEvents> {
         this.pubClient = this.client.duplicate() as ReturnType<typeof createClient>;
 
         // don't throw on error; just reconnect.
-        this.client.on("error", (err) => this.emit("clientError", err));
+        this.client.on("error", (err) => this.emit("clientError", err, "sub"));
+        this.pubClient.on("error", (err) => this.emit("clientError", err, "pub"));
         await Promise.all([this.client.connect(), this.pubClient.connect()]);
 
         // ensure no other clients are listening
@@ -256,3 +258,9 @@ export class InfraConnectionMessageReceiver extends TypedEmitter<InfraConnection
 export const remote = new InfraConnection("tfm:BT800");
 // TODO: move to in-class?
 export const messageReceiver = new InfraConnectionMessageReceiver(remote);
+
+// Log client errors
+remote.on("clientError", (err, desc) => {
+    logger.getChildLogger({ name: "InfraConn" })
+        .error(`[${desc.toUpperCase()}] A Redis client error occured: ${err}`);
+});
