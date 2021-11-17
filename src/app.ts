@@ -5,7 +5,7 @@ import { LoggerWithoutCallSite } from "tslog";
  * The Transformice client
  */
 export const client = new Client(process.env.TFM_USER ?? "User", process.env.TFM_PASS ?? "pass123", {
-    language: enums.languages.en,
+    language: enums.Language.en,
     loginRoom: "*#cbase bot bt",
     autoReconnect: false
 });
