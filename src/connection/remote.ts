@@ -65,7 +65,6 @@ class InfraConnection extends TypedEmitter<InfraConnectionEvents> {
      * The process' cached Redis channel name.
      */
     private redisChannel: string;
-    private logger: typeof app.logger;
     private connected: boolean;
     private subscribedBroadcasts: { [channel: string]: InfraConnectionSubscription };
 
@@ -83,7 +82,6 @@ class InfraConnection extends TypedEmitter<InfraConnectionEvents> {
     constructor(public processName: string) {
         super();
         this.redisChannel = InfraConnection.processToRedisChannel(processName);
-        this.logger = app.logger.getChildLogger({ name: "InfraConn" });
         this.connected = false;
         this.subscribedBroadcasts = {};
     }
@@ -133,7 +131,6 @@ class InfraConnection extends TypedEmitter<InfraConnectionEvents> {
             (message, _channel) => this.onMessagePacketReceived(Buffer.from(message)));
 
         this.connected = true;
-        this.logger.debug("Redis connected.");
     }
 
     /**
@@ -244,16 +241,14 @@ class InfraConnection extends TypedEmitter<InfraConnectionEvents> {
 type KeyType = string | number | symbol;
 type ReceiverCallbackType = (content: Buffer, message: InfraConnectionMessage) => void
 
+export type InfraConnectionMessageReceiverEvents = { [event: KeyType]: ReceiverCallbackType };
 /**
  * An InfraConnection wrapper to neaten `messageReceived` callbacks using EventEmitter.
  */
-export class InfraConnectionMessageReceiver<T extends KeyType = KeyType>
-    extends TypedEmitter<{ [_ in T]: ReceiverCallbackType }>
-{
+export class InfraConnectionMessageReceiver extends TypedEmitter<InfraConnectionMessageReceiverEvents> {
     constructor(public conn: InfraConnection) {
         super();
         conn.on("messageReceived", (message) => {
-            // @ts-ignore
             this.emit(message.event, message.content, message);
         });
     }
@@ -263,20 +258,8 @@ export const remote = new InfraConnection("tfm:BT800");
 // TODO: move to in-class?
 export const messageReceiver = new InfraConnectionMessageReceiver(remote);
 
+
 //tests
-async function name() {
-
-
-    remote.on("broadcastReceived", (m) => {
-        m.channel
-    })
-    //make receiver with unhandled packet
-    type lss = "dowhisper" | "amongus"
-    var ff = new InfraConnectionMessageReceiver<lss>(remote)
-    ff.on("amongus", (a) => { })
-    //make channel subscriber
-    var sub = await remote.subscribeBroadcast("ff")
-    sub.on("message", (content) => {
-
-    })
-}
+remote.on("messageReceived", (message) => {
+    app.logger.info("received", message)
+});

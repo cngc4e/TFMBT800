@@ -22,7 +22,7 @@ interface IWaitForOptions<F extends unknown[]> {
     condition?: (...args: F) => boolean;
 }
 
-export class EventWaiter<Events> {
+export class EventWaiter<Events = { [event: string | symbol]: (...args: any[]) => void }> {
     constructor(public emitter: EventEmitter, private options: IEventWaiterOptions = {}) {}
 
     /**
