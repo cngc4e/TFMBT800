@@ -18,8 +18,10 @@ export enum DynamicModuleStateFlag {
  */
 interface DynamicModuleOps {
     name: string;
-    // Defines if the module will start automatically when the bot comes up.
-    // autoStart?: boolean;
+    /**
+     * Defines if the module will load automatically when the bot comes up. Defaults to `true`.
+     */
+    autoLoad?: boolean;
     init?(this: DynamicModule): Promise<DynamicModuleError>;
     load?(this: DynamicModule): Promise<DynamicModuleError>;
     unload?(this: DynamicModule): Promise<DynamicModuleError>;

@@ -51,8 +51,11 @@ export async function loadModules() {
         loadableModules[module.constructor.name] = module;
     }));
 
-    // Load modules
-    await Promise.all(modules.map(async (module) => await module.load()));
+    // Load modules by default
+    await Promise.all(modules.map(async (module) => {
+        if (module.ops.autoLoad === false) return;
+        await module.load();
+    }));
 }
 
 export async function loadModuleName(moduleName: string): Promise<boolean> {

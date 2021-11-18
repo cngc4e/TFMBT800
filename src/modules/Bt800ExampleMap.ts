@@ -8,7 +8,8 @@ import zlib from "zlib";
 var clientReg: EventRegistry<ClientEvents>;
 
 export default new DynamicModule({
-    name: "Bt800Heart",
+    name: "Bt800ExampleMap",
+    autoLoad: false,
 
     async init() {
         clientReg = new EventRegistry(app.client);
@@ -16,10 +17,6 @@ export default new DynamicModule({
     },
 
     async load() {
-        clientReg.on("ready", () => {
-            this.logger.info("ready!");
-        });
-
         clientReg.on("rawPacket", (conn, ccc, packet) => {
             packet.readPosition = 2;
             switch (ccc) {
@@ -47,26 +44,6 @@ export default new DynamicModule({
             }
             //this.logger.info("receive",IdentifierSplit(ccc))
             //this.logger.info(packet.toString())
-        });
-
-        clientReg.on("connect", (conn) => {
-            this.logger.info("establish conn", conn.socket.remoteAddress, conn.socket.remotePort);
-        });
-
-        clientReg.on("restart", () => {
-            this.logger.info("restarting!");
-            this.logger.trace();
-        });
-
-        clientReg.on("loginError", (code, err1, err2) => {
-            // code
-            // 1: already connected
-            // 2: incorrect
-            this.logger.error("Login err", code, err1, err2);
-        });
-
-        clientReg.on("connectionError", (err) => {
-            this.logger.error("Connection err", err);
         });
 
         return DynamicModuleError.OK;
