@@ -33,11 +33,11 @@ export default new DynamicModule({
 
                 try {
                     let [message] = await (new EventWaiter<ClientEvents>(app.client)).waitFor("whisper", {
-                        condition: (message) => message.sentTo.toLowerCase().includes(name.toLowerCase()),
+                        condition: (message) => message.sentTo.name.toLowerCase().includes(name.toLowerCase()),
                         timeout: 5000
                     });
                     let packet = new ByteArray();
-                    packet.writeUTF(message.sentTo).writeUTF(message.content);
+                    packet.writeUTF(message.sentTo.name).writeUTF(message.content);
                     await remote.sendMessage(connMsg.sender, "reply/whisper", packet.buffer);
                 } catch (e) {}
 
