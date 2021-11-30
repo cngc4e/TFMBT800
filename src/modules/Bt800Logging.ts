@@ -34,10 +34,6 @@ export default new DynamicModule({
             this.logger.error("Login err", code, err1, err2);
         });
 
-        clientReg.on("connectionError", (err) => {
-            this.logger.error("Connection err", err);
-        });
-
         return DynamicModuleError.OK;
     },
 

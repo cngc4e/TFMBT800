@@ -21,6 +21,18 @@ async function tryConnect(retries: number = 0) {
     }
 }
 
+function setupError() {
+    app.client.on("connectionError", (err) => {
+        app.error("Connection err", err);
+        process.exit(1);
+    });
+
+    app.client.on("bulleConnectionError", (err) => {
+        app.error("Bulle connection err", err);
+        process.exit(1);
+    });
+}
+
 async function start() {
     if (process.env.REDIS_URL) {
         await remote.connect(process.env.REDIS_URL);
@@ -28,6 +40,7 @@ async function start() {
     }
 
     await loadModules();
+    setupError();
     await tryConnect();
 }
 
