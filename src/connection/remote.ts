@@ -128,8 +128,11 @@ class InfraConnection extends TypedEmitter<InfraConnectionEvents> {
             throw `Attempt to listen on channel ${this.redisChannel} which already had ${numsubs} subscribers. Duplicated process... or hacked?`;
 
         // subscribe to the receiver channel
-        this.client.subscribe(this.redisChannel,
-            (message, _channel) => this.onMessagePacketReceived(Buffer.from(message)));
+        this.client.subscribe(
+            this.redisChannel,
+            (message, _channel) => this.onMessagePacketReceived(message),
+            true
+        );
 
         this.connected = true;
     }
@@ -157,7 +160,7 @@ class InfraConnection extends TypedEmitter<InfraConnectionEvents> {
 
         await this.pubClient.publish(
             InfraConnection.processToRedisChannel(target),
-            packet.buffer as unknown as string
+            packet.buffer
         );
     }
 
@@ -183,7 +186,7 @@ class InfraConnection extends TypedEmitter<InfraConnectionEvents> {
 
         await this.pubClient.publish(
             InfraConnection.broadcastToRedisChannel(channel),
-            packet.buffer as unknown as string
+            packet.buffer
         );
     }
 
@@ -207,10 +210,11 @@ class InfraConnection extends TypedEmitter<InfraConnectionEvents> {
         await this.client.subscribe(
             InfraConnection.broadcastToRedisChannel(channel),
             async (message, _channel) => {
-                const bcst = await this.onBroadcastPacketReceived(channel, Buffer.from(message));
+                const bcst = await this.onBroadcastPacketReceived(channel, message);
                 subscriber.emit("message", bcst.content, bcst);
                 this.emit("broadcastReceived", bcst);
-            }
+            },
+            true
         );
 
         return subscriber;
