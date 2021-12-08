@@ -11,7 +11,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@cheeseformice/transformice.js": "^1.0.0-beta.14",
+    "@cheeseformice/transformice.js": "^1.0.0-rc.1",
     "dotenv": "^10.0.0",
     "glob": "^7.2.0",
     "jsesc": "^3.0.2",
