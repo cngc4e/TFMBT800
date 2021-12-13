@@ -2,7 +2,7 @@ import { Client, Identifier } from "@cheeseformice/transformice.js";
 import { ClientOptions } from "@cheeseformice/transformice.js/dist/client/Client";
 import ClientEvents from "@cheeseformice/transformice.js/dist/client/Events";
 import { ByteArray, Connection } from "@cheeseformice/transformice.js/dist/utils";
-import { ServerMessage } from "./structures";
+import { LongTextPopup, ServerMessage } from "./structures";
 
 export interface ExtClientEvents extends ClientEvents {
 
@@ -12,6 +12,7 @@ export interface ExtClientEvents extends ClientEvents {
 
     htmlMessage: (message: string) => void;
     serverMessage: (message: ServerMessage) => void;
+    longTextPopup: (popup: LongTextPopup) => void;
 }
 
 declare interface ExtClient {
@@ -56,6 +57,15 @@ class ExtClient extends Client {
                 const argslen = packet.readByte();
                 const args = new Array(argslen).map(() => packet.readUTF());
                 this.emit("serverMessage", new ServerMessage(this, inChannel, content, args));
+                break;
+            }
+            // Long text popup
+            case Identifier(28, 46): {
+                const contentType  = packet.readByte();
+                const key = packet.readUTF();
+                const contentLen = (packet.readUnsignedByte() & 255) << 16 | (packet.readUnsignedByte() & 255) << 8 | packet.readUnsignedByte() & 255;
+                const content = packet.readBufBytes(contentLen).toString();
+                this.emit("longTextPopup", new LongTextPopup(this, contentType, content, key));
                 break;
             }
         }
