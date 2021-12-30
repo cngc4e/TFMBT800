@@ -1,4 +1,5 @@
-import { Client, enums } from "@cheeseformice/transformice.js";
+import { enums } from "@cheeseformice/transformice.js";
+import { Language } from "@cheeseformice/transformice.js/dist/enums";
 import { ExtClient } from "client/client";
 import { LoggerWithoutCallSite } from "tslog";
 
@@ -6,7 +7,7 @@ import { LoggerWithoutCallSite } from "tslog";
  * The Transformice client
  */
 export const client = new ExtClient(process.env.TFM_USER ?? "User", process.env.TFM_PASS ?? "pass123", {
-    language: enums.Language.en,
+    language: process.env.TFM_LANG as Language ?? enums.Language.en,
     loginRoom: "*#cbase bot bt",
     autoReconnect: false
 });

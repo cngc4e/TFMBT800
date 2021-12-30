@@ -2,7 +2,7 @@ import { logger } from "app";
 import glob from "glob";
 import path from "path";
 import { promisify } from "util";
-import { DynamicModule, DynamicModuleError, DynamicModuleStateFlag } from "./DynamicModule";
+import { DynamicModule, DynamicModuleStateFlag } from "./DynamicModule";
 
 const MODULE_PATHS = ["modules", "priv_modules"];
 const globAsync = promisify(glob);
@@ -22,7 +22,7 @@ export async function loadModules() {
         var paths = await globAsync(`${__dirname}/${folder}/*.js`);
 
         await Promise.all(paths.map(async (modulePath) => {
-            let module_name = `./${folder}/` + path.basename(modulePath, ".js");
+            let module_name = `./${folder}/` + path.basename(modulePath);
             try {
                 let module_def = await import(module_name);
                 if (!(module_def.default instanceof DynamicModule))
