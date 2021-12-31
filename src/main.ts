@@ -96,8 +96,8 @@ async function start() {
     }
 
     await loadModules();
-    setupError();
     await tryConnect();
+    setupError();
 }
 
 process.nextTick(start);
