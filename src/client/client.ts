@@ -17,6 +17,7 @@ export interface ExtClientEvents extends ClientEvents {
 
 declare interface ExtClient {
     on<T extends keyof ExtClientEvents>(event: T, listener: ExtClientEvents[T]): this;
+    once<T extends keyof ExtClientEvents>(event: T, listener: ExtClientEvents[T]): this;
     emit<T extends keyof ExtClientEvents>(event: T, ...args: Parameters<ExtClientEvents[T]>): boolean;
 }
 

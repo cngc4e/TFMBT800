@@ -4,14 +4,15 @@
   "description": "Contains source code bits for the Bt800 bot in Transformice.",
   "main": "dist/main.js",
   "scripts": {
-    "start": "npm run tsc && npm run qstart",
-    "qstart": "cross-env NODE_PATH=dist/ node -r dotenv/config .",
+    "start": "npm run tsc && npm run start:q",
+    "start:q": "cross-env NODE_PATH=dist/ node -r dotenv/config .",
     "tsc": "rimraf dist && tsc --build",
+    "tsc:watch": "rimraf dist && tsc --watch",
     "lint": "eslint -c .eslintrc --ext .ts ./src"
   },
   "license": "MIT",
   "dependencies": {
-    "@cheeseformice/transformice.js": "^1.0.0-rc.1",
+    "@cheeseformice/transformice.js": "^1.0.0-rc.2",
     "dotenv": "^10.0.0",
     "glob": "^7.2.0",
     "jsesc": "^3.0.2",

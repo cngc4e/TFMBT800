@@ -1,7 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@cheeseformice/transformice.js': ^1.0.0-rc.1
+  '@cheeseformice/transformice.js': ^1.0.0-rc.2
   '@types/glob': ^7.2.0
   '@types/jsesc': ^3.0.1
   '@types/redis': ^2.8.32
@@ -16,7 +16,7 @@ specifiers:
   typescript: ^4.5.2
 
 dependencies:
-  '@cheeseformice/transformice.js': 1.0.0-rc.1
+  '@cheeseformice/transformice.js': 1.0.0-rc.2
   dotenv: 10.0.0
   glob: 7.2.0
   jsesc: 3.0.2
@@ -34,8 +34,8 @@ devDependencies:
 
 packages:
 
-  /@cheeseformice/transformice.js/1.0.0-rc.1:
-    resolution: {integrity: sha512-YEJTQy1EdeNCk/u4QfgMJSIMmV9HwQtT/63FEgDoWUynzYGKEQdXhbBTQAD3ovENN2Er0fP9ge2gdlGm7/pR6g==}
+  /@cheeseformice/transformice.js/1.0.0-rc.2:
+    resolution: {integrity: sha512-WgTYGEiiWXSb6HPqd9ieH3hviYIZXWMFFp0OIcK6bJPNLiP3YNFvtMB4xNaGr0Co9sQ0GALcyuvatOLob4KTHQ==}
     dependencies:
       got: 11.8.3
       jsesc: 3.0.2
