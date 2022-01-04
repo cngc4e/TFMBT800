@@ -1,22 +1,21 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@cheeseformice/transformice.js': ^1.0.0-rc.2
+  '@cheeseformice/transformice.js': ^1.0.0
   '@types/glob': ^7.2.0
   '@types/jsesc': ^3.0.1
-  '@types/redis': ^2.8.32
   cross-env: ^7.0.3
   dotenv: ^10.0.0
   glob: ^7.2.0
   jsesc: ^3.0.2
-  redis: ^4.0.0
+  redis: ^4.0.1
   rimraf: ^3.0.2
   tiny-typed-emitter: ^2.1.0
-  tslog: ^3.3.0
-  typescript: ^4.5.2
+  tslog: ^3.3.1
+  typescript: ^4.5.4
 
 dependencies:
-  '@cheeseformice/transformice.js': 1.0.0-rc.2
+  '@cheeseformice/transformice.js': 1.0.0
   dotenv: 10.0.0
   glob: 7.2.0
   jsesc: 3.0.2
@@ -27,15 +26,14 @@ dependencies:
 devDependencies:
   '@types/glob': 7.2.0
   '@types/jsesc': 3.0.1
-  '@types/redis': 2.8.32
   cross-env: 7.0.3
   rimraf: 3.0.2
   typescript: 4.5.4
 
 packages:
 
-  /@cheeseformice/transformice.js/1.0.0-rc.2:
-    resolution: {integrity: sha512-WgTYGEiiWXSb6HPqd9ieH3hviYIZXWMFFp0OIcK6bJPNLiP3YNFvtMB4xNaGr0Co9sQ0GALcyuvatOLob4KTHQ==}
+  /@cheeseformice/transformice.js/1.0.0:
+    resolution: {integrity: sha512-Pw6hKRRrerR6up+MMe16TAdlqqf02UT5f1SorHCSC031wi2fqzLlgQfWmNAVF6297pe8wOWWRWCLhoLQQd3lUA==}
     dependencies:
       got: 11.8.3
       jsesc: 3.0.2
@@ -123,12 +121,6 @@ packages:
 
   /@types/node/17.0.5:
     resolution: {integrity: sha512-w3mrvNXLeDYV1GKTZorGJQivK6XLCoGwpnyJFbJVK/aTBQUxOCaa/GlFAAN3OTDFcb7h5tiFG+YXCO2By+riZw==}
-
-  /@types/redis/2.8.32:
-    resolution: {integrity: sha512-7jkMKxcGq9p242exlbsVzuJb57KqHRhNl4dHoQu2Y5v9bCAbtIXXH0R3HleSQW4CTOqpHIYUW3t6tpUj4BVQ+w==}
-    dependencies:
-      '@types/node': 17.0.5
-    dev: true
 
   /@types/responselike/1.0.0:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
