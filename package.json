@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm run tsc && npm run start:q",
     "start:q": "cross-env NODE_PATH=dist/ node -r dotenv/config .",
-    "tsc": "rimraf dist && tsc --build",
+    "tsc": "rimraf dist && tsc --skipLibCheck",
     "tsc:watch": "rimraf dist && tsc --watch",
     "lint": "eslint -c .eslintrc --ext .ts ./src"
   },
